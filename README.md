@@ -111,6 +111,51 @@ python3 scripts/remove_watermarks.py --input images/ --output images_clean/
 
 ---
 
+## API de Processamento de Imagens (FastAPI)
+
+Desenvolvemos uma API HTTP de alta performance para remoção de marcas d'água em tempo real (em memória), evitando o acúmulo de arquivos temporários em disco.
+
+### Instalação de Dependências
+Para instalar as dependências necessárias para a API:
+```bash
+pip install -r requirements.txt
+```
+
+### Como Executar a API
+Inicie o servidor uvicorn na porta `8000`:
+```bash
+uvicorn api.main:app --reload
+```
+
+A API estará acessível em:
+- Documentação interativa (Swagger UI): `http://127.0.0.1:8000/docs`
+- Health check: `GET http://127.0.0.1:8000/`
+
+### Exemplos de Uso (Endpoints)
+
+#### 1. Enviar arquivo de imagem local (`POST /clean-image`)
+Envia uma imagem local do seu computador para ser limpa e retorna o arquivo de imagem limpo imediatamente.
+
+```bash
+curl -X POST "http://127.0.0.1:8000/clean-image" \
+     -H "accept: application/json" \
+     -H "Content-Type: multipart/form-data" \
+     -F "file=@caminho/para/sua/imagem.jpg" \
+     --output imagem_limpa.jpg
+```
+
+#### 2. Enviar URL de imagem externa (`POST /clean-image-url`)
+Faz o download de uma imagem a partir de uma URL pública, remove a marca d'água e retorna a imagem limpa imediatamente.
+
+```bash
+curl -X POST "http://127.0.0.1:8000/clean-image-url" \
+     -H "Content-Type: application/json" \
+     -d '{"url": "https://img.quintoandar.com.br/foto/1234567-facade.jpg"}' \
+     --output imagem_limpa.jpg
+```
+
+---
+
 ## Como Enviar para o Seu GitHub
 
 Recomenda-se **não** comitar a pasta `images/` ou `images_clean/` inteira no GitHub caso você baixe todas as fotos, pois repositórios do GitHub têm limite de tamanho de 1GB a 5GB e comitar mídias grandes prejudica a performance do controle de versão. Em produção, armazene as fotos em um serviço de CDN ou Storage (como AWS S3, Google Cloud Storage ou Firebase Storage).
